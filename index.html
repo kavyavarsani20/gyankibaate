@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jay Swaminarayan! | Gyankibaate</title>
+    <style>
+        :root { --primary: #e67e22; --dark: #2c3e50; --success: #27ae60; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 15px; line-height: 1.6; }
+        .header { text-align: center; color: var(--primary); font-size: 1.8rem; font-weight: bold; margin: 15px 0; }
+        .container { max-width: 650px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 10px solid var(--primary); }
+        .streak-box { background: #fff3e0; padding: 10px; border-radius: 50px; text-align: center; font-weight: bold; color: #e65100; margin-bottom: 20px; }
+        .card { background: #fff; border: 1px solid #eee; border-left: 8px solid var(--dark); padding: 20px; margin-bottom: 20px; border-radius: 12px; }
+        .quiz-card { background: #e8f5e9; border-left: 8px solid var(--success); padding: 20px; margin-bottom: 20px; border-radius: 12px; }
+        .category { font-size: 0.8rem; font-weight: bold; color: var(--primary); text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .guj-text { font-size: 1.25rem; color: #1a237e; display: none; margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 10px; }
+        .btn { background: var(--dark); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-bottom: 15px; }
+        .name-screen { position: fixed; inset: 0; background: var(--dark); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
+        input { padding: 12px; border-radius: 8px; border: none; margin: 15px; width: 250px; font-size: 1rem; }
+    </style>
+</head>
+<body>
+
+<div id="login" class="name-screen" style="display:none;">
+    <h1>Jay Swaminarayan!</h1>
+    <input type="text" id="userName" placeholder="Enter Your Name...">
+    <button class="btn" onclick="saveUser()" style="width: 200px; background: var(--primary);">Start Learning</button>
+</div>
+
+<div class="header">Jay Swaminarayan!</div>
+<div class="container" id="mainApp">
+    <div class="streak-box">🔥 Hello <span id="dispName"></span>! | Streak: <span id="streakCount">0</span> Days</div>
+    
+    <button class="btn" onclick="toggleGuj()">Translate to Gujarati / ગુજરાતી</button>
+
+    <div id="yesterdayQuiz" class="quiz-card" style="display:none;">
+        <span class="category">🧠 Yesterday's Memory Test</span>
+        <p id="quizQuestion">Loading your memory...</p>
+        <button class="btn" style="background:var(--success)" onclick="showAnswer()">Show Answer</button>
+        <p id="quizAnswer" style="display:none; font-weight:bold; color:var(--success);"></p>
+    </div>
+
+    <div id="dailyContent">
+        <p style="text-align:center;">Fetching today's wisdom...</p>
+    </div>
+</div>
+
+<script>
+    async function saveUser() {
+        const name = document.getElementById('userName').value;
+        if(name) {
+            localStorage.setItem('user_name', name);
+            location.reload();
+        }
+    }
+
+    async function fetchKnowledge() {
+        const today = new Date();
+        const m = today.getMonth() + 1;
+        const d = today.getDate();
+
+        try {
+            const resp = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://en.wikipedia.org/api/rest_v1/feed/onthisday/all/${m}/${d}`)}`);
+            const json = await resp.json();
+            const data = JSON.parse(json.contents);
+
+            const event = data.events[0];
+            const scientist = data.births.find(b => b.text.includes('scientist') || b.text.includes('inventor')) || data.births[0];
+
+            // Content for Today
+            const todayData = [
+                { cat: "Today's Great Hero", en: scientist.text, explain: "He was a person who used his brain to solve big problems. (તેઓ એવા વ્યક્તિ હતા જેમણે મોટી સમસ્યાઓ ઉકેલવા માટે પોતાના મગજનો ઉપયોગ કર્યો હતો.)" },
+                { cat: "Historical Event", en: event.text, explain: "Imagine a big change happened in the world on this day. (કલ્પના કરો કે આ દિવસે વિશ્વમાં એક મોટો ફેરફાર થયો હતો.)" }
+            ];
+
+            // Save Today's Fact for Tomorrow's Quiz
+            const lastSavedDate = localStorage.getItem('saveDate');
+            if (lastSavedDate !== today.toDateString()) {
+                localStorage.setItem('yesterdayFact', event.text);
+                localStorage.setItem('saveDate', today.toDateString());
+            }
+
+            renderContent(todayData);
+            setupQuiz();
+        } catch (e) {
+            document.getElementById('dailyContent').innerHTML = "Error loading. Check internet!";
+        }
+    }
+
+    async function renderContent(items) {
+        let html = "";
+        for (let item of items) {
+            const trans = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=gu&dt=t&q=${encodeURIComponent(item.en)}`);
+            const tJson = await trans.json();
+            const guText = tJson[0][0][0];
+
+            html += `<div class="card">
+                <span class="category">${item.cat}</span>
+                <div class="eng-text"><b>Fact:</b> ${item.en}<br><br><b>Child-friendly Explain:</b> ${item.explain}</div>
+                <div class="guj-text">${guText}</div>
+            </div>`;
+        }
+        document.getElementById('dailyContent').innerHTML = html;
+    }
+
+    function setupQuiz() {
+        const yesterdayFact = localStorage.getItem('yesterdayFact');
+        const saveDate = localStorage.getItem('saveDate');
+        const today = new Date().toDateString();
+
+        // Only show quiz if we have a fact from a previous day
+        if (yesterdayFact && saveDate !== today) {
+            document.getElementById('yesterdayQuiz').style.display = 'block';
+            document.getElementById('quizQuestion').innerText = "Do you remember what major event we learned about yesterday?";
+            document.getElementById('quizAnswer').innerText = "Yesterday's Fact: " + yesterdayFact;
+        }
+    }
+
+    function showAnswer() {
+        document.getElementById('quizAnswer').style.display = 'block';
+    }
+
+    function toggleGuj() {
+        const guj = document.querySelectorAll('.guj-text');
+        const eng = document.querySelectorAll('.eng-text');
+        const isHidden = guj[0].style.display === 'none' || guj[0].style.display === '';
+        guj.forEach(el => el.style.display = isHidden ? 'block' : 'none');
+        eng.forEach(el => el.style.display = isHidden ? 'none' : 'block');
+    }
+
+    window.onload = () => {
+        const user = localStorage.getItem('user_name');
+        if(!user) {
+            document.getElementById('login').style.display = 'flex';
+        } else {
+            document.getElementById('dispName').innerText = user;
+            
+            // Streak Logic
+            let streak = parseInt(localStorage.getItem('streak')) || 0;
+            let lastVisit = localStorage.getItem('lastVisit');
+            let today = new Date().toDateString();
+            if(lastVisit !== today) {
+                streak++;
+                localStorage.setItem('streak', streak);
+                localStorage.setItem('lastVisit', today);
+            }
+            document.getElementById('streakCount').innerText = streak;
+            fetchKnowledge();
+        }
+    };
+</script>
+</body>
+</html>
