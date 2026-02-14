@@ -1,0 +1,28 @@
+{
+  "46": {
+    "articles": [
+      {
+        "category": "Electronics & Science",
+        "title": "The Magic of the Diode: The One-Way Gate",
+        "eng": "Imagine electricity is like a crowd of people trying to enter a stadium. A Diode is like a turnstile gate that only spins in one direction. In electronics, we call this 'Forward Bias' (ફોરવર્ડ બાયસ) when electricity can pass, and 'Reverse Bias' (રિવર્સ બાયસ) when it is blocked. <br><br><b>Why it matters:</b> Without diodes, your phone charger would explode! When you plug your charger into the wall, the electricity comes out as AC (Alternating Current). But your battery only eats DC (Direct Current). The Diode acts as a guard, only letting the electricity flow in the direction your battery needs.  It is the simplest form of a semiconductor.",
+        "guj": "વિચારો કે વીજળી એ સ્ટેડિયમમાં પ્રવેશતા લોકોના ટોળા જેવી છે. ડાયોડ એ એક એવા દરવાજા જેવો છે જે માત્ર એક જ દિશામાં ફરે છે. જો વીજળી ઉંધી દિશામાં આવવાનો પ્રયત્ન કરે, તો ડાયોડ તેને રોકી દે છે. આને કારણે તમારા ફોનનું ચાર્જર સુરક્ષિત રહે છે. તે AC વીજળીને DC માં બદલવામાં મદદ કરે છે."
+      },
+      {
+        "category": "Global Politics",
+        "title": "The Power of Diplomacy",
+        "eng": "Politics isn't just about voting; it's about 'Diplomacy' (ડિપ્લોમસી). Imagine two neighbors fighting over a tree. Diplomacy is when they sit down and agree to share the fruit instead of cutting the tree down. It is the art of making peace.",
+        "guj": "ડિપ્લોમસી એટલે બે દેશો વચ્ચે મિત્રતા કરવાની કળા. જ્યારે બે દેશો લડવાને બદલે શાંતિથી વાતચીત કરીને રસ્તો કાઢે, ત્યારે તેને ડિપ્લોમસી કહેવાય છે."
+      }
+    ]
+  },
+  "47": {
+    "articles": [
+      {
+        "category": "Market Trends",
+        "title": "The Rise of Electric Vehicles (EV)",
+        "eng": "The world is shifting from Petrol to Batteries. This is happening because batteries are becoming cheaper and the environment needs less smoke.  Companies like Tesla and Tata are leading this revolution. For an ECE student, this means more jobs in Battery Management Systems (BMS).",
+        "guj": "દુનિયા હવે પેટ્રોલથી બેટરી તરફ જઈ રહી છે. બેટરી સસ્તી થઈ રહી છે અને તેનાથી પ્રદૂષણ ઘટશે. આ ક્ષેત્રમાં એન્જિનિયરો માટે ઘણી નવી તકો છે."
+      }
+    ]
+  }
+}
